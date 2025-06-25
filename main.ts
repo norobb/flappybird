@@ -7,9 +7,11 @@ sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSp
     sprites.destroy(sprite)
 })
 let highscore = 0
-let Hinderniss: Sprite = null
+let Hinderniss_oben: Sprite = null
+let Hinderniss_unten: Sprite = null
 effects.confetti.startScreenEffect(200)
 scene.setBackgroundImage(assets.image`Hintergrund`)
+let Abstand = 80
 let Gustav_Gans = sprites.create(assets.image`Duck`, SpriteKind.Player)
 controller.moveSprite(Gustav_Gans, 0, 100)
 scroller.scrollBackgroundWithSpeed(-50, 0)
@@ -22,10 +24,15 @@ assets.animation`Duck_animation`,
 100,
 true
 )
-game.onUpdateInterval(1000, function () {
-    Hinderniss = sprites.create(assets.image`Snake`, SpriteKind.Enemy)
-    Hinderniss.setPosition(scene.screenWidth(), randint(10, scene.screenHeight()))
-    Hinderniss.vx = -50
+game.onUpdateInterval(2500, function () {
+    Hinderniss_unten = sprites.create(assets.image`Hinderniss_unten`, SpriteKind.Enemy)
+    Hinderniss_oben = sprites.create(assets.image`Hinderniss_unten`, SpriteKind.Enemy)
+    Hinderniss_unten.setScale(2, ScaleAnchor.Middle)
+    Hinderniss_oben.setScale(2, ScaleAnchor.Middle)
+    Hinderniss_unten.setPosition(scene.screenWidth(), randint(80, 150))
+    Hinderniss_oben.setPosition(scene.screenWidth(), randint(-30, 40) - Abstand)
+    Hinderniss_unten.vx = -50
+    Hinderniss_oben.vx = -50
     info.changeScoreBy(1)
 })
 forever(function () {
