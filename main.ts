@@ -1,47 +1,61 @@
 namespace SpriteKind {
-    export const Feld = SpriteKind.create()
+    export const Pipe = SpriteKind.create()
 }
-// Debug-Ausgabe
-sprites.onOverlap(SpriteKind.Enemy, SpriteKind.Player, function (sprite, otherSprite) {
-    info.changeLifeBy(-1)
-    sprites.destroy(sprite)
-})
-let highscore = 0
-let Hinderniss_oben: Sprite = null
-let Hinderniss_unten: Sprite = null
-effects.confetti.startScreenEffect(200)
+
+const GAP = 44
+const SPEED = -50
+const FLAP = -90
+const GRAVITY = 300
+
+const pipeBottom = assets.image`Hinderniss_unten`
+const pipeTop = pipeBottom.clone()
+pipeTop.flipY()
+
 scene.setBackgroundImage(assets.image`Hintergrund`)
-let Abstand = 80
-let Gustav_Gans = sprites.create(assets.image`Duck`, SpriteKind.Player)
-controller.moveSprite(Gustav_Gans, 0, 100)
-scroller.scrollBackgroundWithSpeed(-50, 0)
-Gustav_Gans.setStayInScreen(true)
-info.setLife(3)
+scroller.scrollBackgroundWithSpeed(SPEED, 0)
 info.setScore(0)
-animation.runImageAnimation(
-Gustav_Gans,
-assets.animation`Duck_animation`,
-100,
-true
-)
-game.onUpdateInterval(2500, function () {
-    Hinderniss_unten = sprites.create(assets.image`Hinderniss_unten`, SpriteKind.Enemy)
-    Hinderniss_oben = sprites.create(assets.image`Hinderniss_unten`, SpriteKind.Enemy)
-    Hinderniss_unten.setScale(2, ScaleAnchor.Middle)
-    Hinderniss_oben.setScale(2, ScaleAnchor.Middle)
-    Hinderniss_unten.setPosition(scene.screenWidth(), randint(80, 150))
-    Hinderniss_oben.setPosition(scene.screenWidth(), randint(-30, 40) - Abstand)
-    Hinderniss_unten.vx = -50
-    Hinderniss_oben.vx = -50
-    info.changeScoreBy(1)
+
+const duck = sprites.create(assets.image`Duck`, SpriteKind.Player)
+duck.setPosition(40, scene.screenHeight() / 2)
+duck.ay = GRAVITY
+animation.runImageAnimation(duck, assets.animation`Duck_animation`, 100, true)
+
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    duck.vy = FLAP
 })
-forever(function () {
-    pause(10)
-    Gustav_Gans.y += 0.6
-    while (info.life() == 0) {
-        while (info.score() > info.highScore()) {
-            highscore = info.score()
-            game.splash("Highscore:", highscore)
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    duck.vy = FLAP
+})
+
+function spawnPipes() {
+    const gapY = randint(GAP / 2 + 10, scene.screenHeight() - GAP / 2 - 10)
+    const x = scene.screenWidth() + pipeBottom.width / 2
+    const top = sprites.create(pipeTop, SpriteKind.Pipe)
+    const bottom = sprites.create(pipeBottom, SpriteKind.Pipe)
+    top.setPosition(x, gapY - GAP / 2 - pipeTop.height / 2)
+    bottom.setPosition(x, gapY + GAP / 2 + pipeBottom.height / 2)
+    top.vx = SPEED
+    bottom.vx = SPEED
+    sprites.setDataBoolean(top, "scorer", true) // nur das obere Rohr zählt Punkte
+}
+
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Pipe, function () {
+    game.gameOver(false)
+})
+
+game.onUpdate(function () {
+    if (duck.top < 0 || duck.bottom > scene.screenHeight()) {
+        game.gameOver(false)
+    }
+    for (const pipe of sprites.allOfKind(SpriteKind.Pipe)) {
+        if (pipe.right < 0) {
+            sprites.destroy(pipe)
+        } else if (sprites.readDataBoolean(pipe, "scorer") && pipe.right < duck.left) {
+            sprites.setDataBoolean(pipe, "scorer", false)
+            info.changeScoreBy(1)
         }
     }
 })
+
+game.onUpdateInterval(1500, spawnPipes)
+game.showLongText("A oder Hoch: flattern. Rohren ausweichen!", DialogLayout.Bottom)

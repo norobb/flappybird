@@ -1,19 +1,14 @@
 {
-    "name": "Flappybird",
-    "description": "",
+    "name": "Flappy Duck",
+    "description": "Flappy-Bird-Klon für MakeCode Arcade: Gustav Gans weicht Rohren aus.",
     "dependencies": {
-        "device": "*",
         "animation": "*",
-        "multiplayer": "*",
         "arcade-sprite-data": "github:microsoft/arcade-sprite-data#v0.2.1",
         "arcade-background-scroll": "github:microsoft/arcade-background-scroll#v0.1.2"
     },
     "files": [
-        "main.blocks",
         "main.ts",
         "README.md",
-        "assets.json",
-        "main.py",
         "tilemap.g.jres",
         "tilemap.g.ts",
         "images.g.jres",
@@ -33,5 +28,5 @@
     "supportedTargets": [
         "arcade"
     ],
-    "preferredEditor": "blocksprj"
+    "preferredEditor": "tsprj"
 }

@@ -1,26 +1,25 @@
- 
+# Flappy Duck
 
+Flappy-Bird-Klon für [MakeCode Arcade](https://arcade.makecode.com/): Gustav Gans weicht Rohren aus.
 
-> Diese Seite bei [https://norobb.github.io/flappybird/](https://norobb.github.io/flappybird/) öffnen
+**Spielen:** https://norobb.github.io/flappybird/
 
-## Als Erweiterung verwenden
+## Steuerung
 
-Dieses Repository kann als **Erweiterung** in MakeCode hinzugefügt werden.
+- `A` oder `↑`: flattern
+- Rohren ausweichen, jedes passierte Rohrpaar gibt einen Punkt. Boden, Decke oder Rohr beenden das Spiel; der Highscore wird von MakeCode gespeichert.
 
-* öffne [https://arcade.makecode.com/](https://arcade.makecode.com/)
-* klicke auf **Neues Projekt**
-* klicke auf **Erweiterungen** unter dem Zahnrad-Menü
-* nach **https://github.com/norobb/flappybird** suchen und importieren
+## Entwickeln
 
-## Dieses Projekt bearbeiten
+- Im Browser: in MakeCode **Importieren → Importiere URL** und `https://github.com/norobb/flappybird` einfügen.
+- Lokal (Node 20+): `npx makecode build` (Hardware-Build) bzw. `npx makecode build -j` (JavaScript, `built/binary.js`). Simulator: `npx makecode serve`.
 
-Um dieses Repository in MakeCode zu bearbeiten.
+Der Code liegt in `main.ts`, die Grafiken in `images.g.ts`/`images.g.jres` (nur im MakeCode-Editor ändern).
 
-* öffne [https://arcade.makecode.com/](https://arcade.makecode.com/)
-* klicke auf **Importieren** und dann auf **Importiere URL**
-* füge **https://github.com/norobb/flappybird** ein und klicke auf Importieren
+## Workflows
 
-#### Metadaten (verwendet für Suche, Rendering)
-
-* for PXT/arcade
-<script src="https://makecode.com/gh-pages-embed.js"></script><script>makeCodeRender("{{ site.makecode.home_url }}", "{{ site.github.owner_name }}/{{ site.github.repository_name }}");</script>
+| Workflow | Auslöser | Aufgabe |
+|---|---|---|
+| `ci.yml` | Push/PR auf `master` | Projekt bauen, Build als Artefakt ablegen |
+| `pages.yml` | Push auf `master` | Spielseite auf GitHub Pages veröffentlichen |
+| `release.yml` | Release erstellt | `binary.js` und `binary.hex` am Release anhängen |
