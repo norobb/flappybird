@@ -22,6 +22,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npx --yes makecode build -j
+      - run: cp built/binary.js assets/js/binary.js # die Seite lädt dieses Build
       - uses: actions/jekyll-build-pages@v1
       - uses: actions/upload-pages-artifact@v3
       - id: deployment
