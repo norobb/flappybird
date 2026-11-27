@@ -17,15 +17,20 @@ info.setScore(0)
 
 const duck = sprites.create(assets.image`Duck`, SpriteKind.Player)
 duck.setPosition(40, scene.screenHeight() / 2)
-duck.ay = GRAVITY
+let started = false
+duck.sayText("A drücken")
 animation.runImageAnimation(duck, assets.animation`Duck_animation`, 100, true)
 
-controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+function flap() {
+    if (!started) {
+        started = true
+        duck.sayText("")
+        duck.ay = GRAVITY
+    }
     duck.vy = FLAP
-})
-controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
-    duck.vy = FLAP
-})
+}
+controller.A.onEvent(ControllerButtonEvent.Pressed, flap)
+controller.up.onEvent(ControllerButtonEvent.Pressed, flap)
 
 function spawnPipes() {
     const gapY = randint(GAP / 2 + 10, scene.screenHeight() - GAP / 2 - 10)
@@ -57,5 +62,6 @@ game.onUpdate(function () {
     }
 })
 
-game.onUpdateInterval(1500, spawnPipes)
-game.showLongText("A oder Hoch: flattern. Rohren ausweichen!", DialogLayout.Bottom)
+game.onUpdateInterval(1500, function () {
+    if (started) spawnPipes()
+})
